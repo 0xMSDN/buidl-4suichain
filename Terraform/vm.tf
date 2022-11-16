@@ -117,7 +117,7 @@ resource "azurerm_virtual_machine" "suivm" {
     location = azurerm_resource_group.testvm.location
     resource_group_name = azurerm_resource_group.testvm.name
     network_interface_ids = [azurerm_network_interface.suinic.id]
-    vm_size = "Basic_A1"
+    vm_size = "Standard_D2s_v3"
     storage_image_reference {
         publisher = "Canonical"
         offer     = "UbuntuServer"
