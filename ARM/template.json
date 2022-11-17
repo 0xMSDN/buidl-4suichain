@@ -1,0 +1,206 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_VNet1_name": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('virtualMachine_name'),'-vnet')]"
+        },
+        "virtaulNetworkInterfaces_name": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('virtualMachine_name'),'-nic')]" 
+        },
+        "virtualMachine_name": {
+            "type": "string",
+            "defaultValue": "suichain"
+        },
+        "virtualMachine_public_ip_name": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('virtualMachine_name'),'-external')]"
+        },
+        "virtualMachine_subnet_name": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('virtualMachine_name'),'-internal')]"
+        },
+        "virtualNetwork_security_group_name": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('virtualMachine_name'),'-nsg')]"
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "ubuntu"
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS1_v2"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        }
+    },
+    "variables": {
+
+    },
+    "resources": [
+        // {
+        //     "name": "[toLower('ubuntuVM1storage')]",
+        //     "type": "Microsoft.Storage/storageAccounts",
+        //     "apiVersion": "2021-04-01",
+        //     "location": "[resourceGroup().location]",
+        //     "tags": {
+        //         "displayName": "ubuntuVM1 Storage Account"
+        //     },
+        //     "sku": {
+        //         "name": "Standard_LRS"
+        //     },
+        //     "kind": "Storage"
+        // },
+        {
+            "name": "[parameters('virtualMachine_public_ip_name')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "PublicIPAddress"
+            },
+            "properties": {
+                //"publicIPAllocationMethod": "Dynamic",
+                "publicIPAllocationMethod": "Static",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower('ubuntuVM1')]"
+                }
+            }
+        },
+        {
+            "name": "[parameters('virtualNetwork_security_group_name')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "SSH",
+                        "properties": {
+                            "description": "description",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('virtualNetworks_VNet1_name')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('virtualNetwork_security_group_name'))]"
+            ],
+            "tags": {
+                "displayName": "ubuntuVM1-VirtualNetwork"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('virtualMachine_subnet_name')]",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('virtualNetwork_security_group_name'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('virtaulNetworkInterfaces_name')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('virtualMachine_public_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNet1_name'))]"
+            ],
+            "tags": {
+                "displayName": "ubuntuVM1-NetworkInterface"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipConfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('virtualMachine_public_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet1_name'), parameters('virtualMachine_subnet_name'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('virtualMachine_name')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2021-03-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('virtaulNetworkInterfaces_name'))]"
+            ],
+            "tags": {
+                "displayName": "ubuntuVM1"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachine_name')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "ubuntuVM1-OSDisk",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('virtaulNetworkInterfaces_name'))]"
+                        }
+                    ]
+                }
+                // "diagnosticsProfile": {
+                //     "bootDiagnostics": {
+                //         "enabled": true,
+                //         "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', toLower('ubuntuVM1storage'))).primaryEndpoints.blob]"
+                //     }
+                // }
+            }
+        }
+    ]
+}

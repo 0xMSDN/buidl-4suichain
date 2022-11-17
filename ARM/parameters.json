@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachine_name": {
+            "value": "suichain"
+        },
+        "virtualNetworks_VNet1_name": {
+            "value": "[concat(parameters('virtualMachine_name'),'-vnet')]" 
+        },
+        "virtaulNetworkInterfaces_name": {
+            "value": "[concat(parameters('virtualMachine_name'),'-nic')]" 
+        },
+        "virtualMachine_public_ip_name": {
+            "value": "[concat(parameters('virtualMachine_name'),'-external')]"
+        },
+        "virtualNetwork_security_group_name": {
+            "value": "[concat(parameters('virtualMachine_name'),'-nsg')]"
+        },
+        "virtualMachine_subnet_name": {
+            "value": "[concat(parameters('virtualMachine_name'),'-internal')]"
+        },
+        "vmSize": {
+            "value": "Standard_DS1"
+        },
+        "adminUsername":{
+            "value": "ubuntu"
+        },
+        "adminPassword":{
+            "value":""
+        }
+    }
+} 
