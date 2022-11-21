@@ -230,7 +230,7 @@
                 },
                 "protectedSettings": {
                     "commandToExecute": "sh install.sh",
-                    "fileUris": ["https://raw.githubusercontent.com/zhengyiqun/AzureTemplateDemo/main/scripts/install.sh"]
+                    "fileUris": ["https://raw.githubusercontent.com/0xMSDN/buidl-4suichain/main/ARM/scripts/install.sh"]
                 }
             }
         }
