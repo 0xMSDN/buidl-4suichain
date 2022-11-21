@@ -28,6 +28,12 @@
         },
         "adminPassword":{
             "value":""
+        },
+        "location": {
+            "value":"East Asia"
+        },
+        "newStorageAccountName": {
+            "value":"[concat(parameters('virtualMachine_name'),'storage')]"
         }
     }
 } 
