@@ -1,5 +1,10 @@
 # 使用模板在Azure中部署Sui Chain
 
+模板分成两部分：                      <br>
+1、Terraform                        <br>
+2、Azure Template                   <br>
+
+
 ## 1、Terraform 
 
 模板使用AzureRM Provider部署Azure VM。 <br>
