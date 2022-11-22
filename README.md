@@ -27,9 +27,6 @@
 3、填写Admin Password <br>
 4、其他保持默认 <br>
 
-![parameters](./ARM/Pictures/arm.png)
-
-
 
 ---
 
