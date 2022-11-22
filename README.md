@@ -18,6 +18,7 @@
 
 模板使用 `Deploy to Azure` 一键部署 <br>
 部署完成后即可直接通过用户名密码登录 <br>
+可以验证 `Docker` 和 `Docker-Compose` 命令。 <br>  
 <br>
 
 参数说明: <br>
