@@ -11,7 +11,8 @@
 
 模板使用AzureRM Provider部署Azure VM。 <br>
 在虚拟机部署完成之后需要等待初始化脚本运行完毕，大约需要5分钟。 <br>
-可以验证 `Docker` 和 `Docker-Compose` 命令。 <br>  
+可以验证 `Docker` 和 `Docker-Compose` 命令。 <br> 
+(请确保在执行前安装Azure CLI，并执行 `Az login`) <br>
 <br>
 
 ## 2、Azure Template
