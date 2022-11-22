@@ -2,10 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "virtualNetworks_VNet1_name": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('virtualMachine_name'),'-vnet')]"
-        },
         "virtaulNetworkInterfaces_name": {
             "type": "string",
             "defaultValue": "[concat(parameters('virtualMachine_name'),'-nic')]" 
@@ -50,6 +46,7 @@
         }
     },
     "variables": {
+        "vnet-name": "[concat(parameters('virtualMachine_name'),'-vnet')]"
         
     },
     "resources": [
@@ -135,8 +132,8 @@
             }
         },
         {
-            "name": "[parameters('virtualNetworks_VNet1_name')]",
             "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vnet-name')]",
             "apiVersion": "2020-11-01",
             "location": "[parameters('location')]",
             "dependsOn": [
@@ -171,7 +168,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('virtualMachine_public_ip_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNet1_name'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnet-name'))]"
             ],
             "tags": {
                 "displayName": "ubuntuVM1-NetworkInterface"
@@ -186,7 +183,7 @@
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('virtualMachine_public_ip_name'))]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet1_name'), parameters('virtualMachine_subnet_name'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet-name'), parameters('virtualMachine_subnet_name'))]"
                             }
                         }
                     }
