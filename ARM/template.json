@@ -2,25 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "virtaulNetworkInterfaces_name": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('virtualMachine_name'),'-nic')]" 
-        },
         "virtualMachine_name": {
             "type": "string",
             "defaultValue": "suichain"
-        },
-        "virtualMachine_public_ip_name": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('virtualMachine_name'),'-external')]"
-        },
-        "virtualMachine_subnet_name": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('virtualMachine_name'),'-internal')]"
-        },
-        "virtualNetwork_security_group_name": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('virtualMachine_name'),'-nsg')]"
         },
         "adminUsername": {
             "type": "string",
@@ -35,24 +19,24 @@
         },
         "location": {
             "type": "string",
-            "defaultValue": "East Asia",
+            "defaultValue": "[resourceGroup().location]",
             "metadata": {
-                "description": "Deployment location"
+                "description": "Location for all resources."
             }
-        },
-        "newStorageAccountName": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('virtualMachine_name'),'storage')]"
         }
     },
     "variables": {
-        "vnet-name": "[concat(parameters('virtualMachine_name'),'-vnet')]"
-        
+        "vnet-name": "[concat(parameters('virtualMachine_name'),'-vnet')]",
+        "vnetInterfaces-name": "[concat(parameters('virtualMachine_name'),'-nic')]",
+        "vnetPubilcIP-name": "[concat(parameters('virtualMachine_name'),'-external')]",
+        "vnetSubnet-name": "[concat(parameters('virtualMachine_name'),'-internal')]",
+        "vnetSecurityGroup-name": "[concat(parameters('virtualMachine_name'),'-nsg')]",
+        "StorageAccount-name": "[concat(parameters('virtualMachine_name'),'storage')]"
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[parameters('newStorageAccountName')]",
+            "name": "[variables('StorageAccount-name')]",
             "apiVersion": "2021-04-01",
             "location": "[parameters('location')]",
             "tags": {
@@ -64,8 +48,8 @@
             "kind": "Storage"
         },
         {
-            "name": "[parameters('virtualMachine_public_ip_name')]",
             "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('vnetPubilcIP-name')]",
             "apiVersion": "2020-11-01",
             "location": "[parameters('location')]",
             "tags": {
@@ -80,8 +64,8 @@
             }
         },
         {
-            "name": "[parameters('virtualNetwork_security_group_name')]",
             "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('vnetSecurityGroup-name')]",
             "apiVersion": "2020-11-01",
             "location": "[parameters('location')]",
             "properties": {
@@ -137,7 +121,7 @@
             "apiVersion": "2020-11-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('virtualNetwork_security_group_name'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vnetSecurityGroup-name'))]"
             ],
             "tags": {
                 "displayName": "ubuntuVM1-VirtualNetwork"
@@ -150,11 +134,11 @@
                 },
                 "subnets": [
                     {
-                        "name": "[parameters('virtualMachine_subnet_name')]",
+                        "name": "[variables('vnetSubnet-name')]",
                         "properties": {
                             "addressPrefix": "10.0.0.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('virtualNetwork_security_group_name'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vnetSecurityGroup-name'))]"
                             }
                         }
                     }
@@ -162,12 +146,12 @@
             }
         },
         {
-            "name": "[parameters('virtaulNetworkInterfaces_name')]",
             "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('vnetInterfaces-name')]",
             "apiVersion": "2020-11-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('virtualMachine_public_ip_name'))]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('vnetPubilcIP-name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnet-name'))]"
             ],
             "tags": {
@@ -180,10 +164,10 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('virtualMachine_public_ip_name'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vnetPubilcIP-name'))]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet-name'), parameters('virtualMachine_subnet_name'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet-name'), variables('vnetSubnet-name'))]"
                             }
                         }
                     }
@@ -196,7 +180,7 @@
             "apiVersion": "2021-03-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('virtaulNetworkInterfaces_name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vnetInterfaces-name'))]"
             ],
             "tags": {
                 "displayName": "ubuntuVM1"
@@ -226,14 +210,14 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('virtaulNetworkInterfaces_name'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vnetInterfaces-name'))]"
                         }
                     ]
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))).primaryEndpoints.blob]"
+                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('StorageAccount-name'))).primaryEndpoints.blob]"
                     }
                 }
             }

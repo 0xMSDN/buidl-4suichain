@@ -5,18 +5,6 @@
         "virtualMachine_name": {
             "value": "suichain"
         },
-        "virtaulNetworkInterfaces_name": {
-            "value": "[concat(parameters('virtualMachine_name'),'-nic')]" 
-        },
-        "virtualMachine_public_ip_name": {
-            "value": "[concat(parameters('virtualMachine_name'),'-external')]"
-        },
-        "virtualNetwork_security_group_name": {
-            "value": "[concat(parameters('virtualMachine_name'),'-nsg')]"
-        },
-        "virtualMachine_subnet_name": {
-            "value": "[concat(parameters('virtualMachine_name'),'-internal')]"
-        },
         "vmSize": {
             "value": "Standard_D2s_v3"
         },
@@ -25,12 +13,6 @@
         },
         "adminPassword":{
             "value":""
-        },
-        "location": {
-            "value":"East Asia"
-        },
-        "newStorageAccountName": {
-            "value":"[concat(parameters('virtualMachine_name'),'storage')]"
         }
     }
 } 
