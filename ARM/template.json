@@ -16,13 +16,6 @@
         },
         "adminPassword": {
             "type": "securestring"
-        },
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "Location for all resources."
-            }
         }
     },
     "variables": {
@@ -31,14 +24,15 @@
         "vnetPubilcIP-name": "[concat(parameters('virtualMachine_name'),'-external')]",
         "vnetSubnet-name": "[concat(parameters('virtualMachine_name'),'-internal')]",
         "vnetSecurityGroup-name": "[concat(parameters('virtualMachine_name'),'-nsg')]",
-        "StorageAccount-name": "[concat(parameters('virtualMachine_name'),'storage')]"
+        "StorageAccount-name": "[concat(parameters('virtualMachine_name'),'storage')]",
+        "location": "[resourceGroup().location]"
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('StorageAccount-name')]",
             "apiVersion": "2021-04-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "tags": {
                 "displayName": "ubuntuVM1 Storage Account"
             },
@@ -51,7 +45,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('vnetPubilcIP-name')]",
             "apiVersion": "2020-11-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "tags": {
                 "displayName": "PublicIPAddress"
             },
@@ -67,7 +61,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('vnetSecurityGroup-name')]",
             "apiVersion": "2020-11-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "properties": {
                 "securityRules": [
                     {
@@ -119,7 +113,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('vnet-name')]",
             "apiVersion": "2020-11-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vnetSecurityGroup-name'))]"
             ],
@@ -149,7 +143,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('vnetInterfaces-name')]",
             "apiVersion": "2020-11-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('vnetPubilcIP-name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('vnet-name'))]"
@@ -178,7 +172,7 @@
             "name": "[parameters('virtualMachine_name')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2021-03-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('vnetInterfaces-name'))]"
             ],
@@ -226,7 +220,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualMachine_name'),'/installDocker')]",
             "apiVersion": "2021-11-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachine_name'))]"
             ],
