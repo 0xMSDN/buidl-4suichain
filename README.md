@@ -41,5 +41,5 @@ curl --location --request POST <your IP address>:9000 \
 可以看到：
 ![rpc](ARM/pictures/rpc.png)
 
-检查节点的同步状态: <br>要检查您的节点的当前同步状态，您可以从此处使用 Sui 节点检查器。<br>只需输入您的节点 IP 并单击“检查”，它就会告诉您到目前为止，您的节点已索引的交易百分比
+检查节点的同步状态: <br>要检查您的节点的当前同步状态，您可以从此处使用 Sui 节点检查器 `https://bit.ly/sui_validator`。<br>只需输入您的节点 IP 并单击“检查”，它就会告诉您到目前为止，您的节点已索引的交易百分比
 ![check](ARM/pictures/check.png)
