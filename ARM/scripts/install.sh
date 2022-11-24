@@ -23,4 +23,3 @@ sudo mkdir /home/ubuntu/sui
 sudo wget https://raw.githubusercontent.com/MystenLabs/sui/main/docker/fullnode/docker-compose.yaml -O /home/ubuntu/sui/docker-compose.yaml
 sudo wget https://github.com/MystenLabs/sui/raw/main/crates/sui-config/data/fullnode-template.yaml -O /home/ubuntu/sui/fullnode-template.yaml
 sudo wget https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genesis.blob -O /home/ubuntu/sui/genesis.blob
-
