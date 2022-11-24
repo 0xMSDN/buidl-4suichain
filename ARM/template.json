@@ -53,7 +53,7 @@
                 //"publicIPAllocationMethod": "Dynamic",
                 "publicIPAllocationMethod": "Static",
                 "dnsSettings": {
-                    "domainNameLabel": "[toLower('ubuntuVM1')]"
+                    "domainNameLabel": "[concat(toLower('ubuntuVM1'),uniqueString(resourceGroup().id))]"
                 }
             }
         },
