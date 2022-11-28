@@ -43,3 +43,8 @@ curl --location --request POST <your IP address>:9000 \
 
 检查节点的同步状态: <br>要检查您的节点的当前同步状态，您可以从此处使用 Sui 节点检查器 `https://bit.ly/sui_validator`。<br>只需输入您的节点 IP 并单击“检查”，它就会告诉您到目前为止，您的节点已索引的交易百分比
 ![check](ARM/pictures/check.png)
+
+---
+***我们是微软CSI（Micorosft China Strategic Incubator）团队，目前微软有孵化Startup项目的计划，如果大家有好的项目或者问题欢迎随时来跟我们聊一聊，我们很希望能和社区的开发者们一起探讨web3的新技术以及未来的发展方向，如果有机会合作并加入微软孵化计划还有免费的资源可以使用***
+
+***联系邮箱：xiaopingfeng@microsoft.com***
