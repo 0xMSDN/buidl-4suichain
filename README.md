@@ -1,3 +1,6 @@
+[![Page Views Count](https://badges.toozhao.com/badges/01GSH8K8HVP0RX6M7GD08D5YBP/green.svg)](https://badges.toozhao.com/stats/01GSH8K8HVP0RX6M7GD08D5YBP "View Count")
+
+
 # 使用模板在Azure中部署Sui Chain
 
 *目前Sui Chain只有Fullnode节点类型。<br> validator节点的申请链接是 `https://bit.ly/sui_validator` <br> 但从8月15日开始已经不再接受新的申请*
